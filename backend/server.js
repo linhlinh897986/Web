@@ -55,6 +55,11 @@ app.post('/api/verify-license', async (req, res) => {
   }
 });
 
+// ── PING / HEALTH CHECK (Để UptimeRobot/Cron ping chống ngủ đông) ────────────
+app.get('/api/ping', (req, res) => {
+  res.json({ status: 'ok', message: 'Pong', timestamp: new Date() });
+});
+
 // ── ĐĂNG NHẬP GOOGLE ────────────────────────────────────────────────────────
 app.post('/api/auth/google', auth.handleGoogleLogin);
 app.get('/api/auth/google/client-id', (req, res) => {
