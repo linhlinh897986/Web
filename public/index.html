@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bảng điều khiển - AIO Key Store</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <a href="/" class="logo-section">
+        <div class="logo-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <span class="logo-text">AIO Key Store</span>
+      </a>
+      <div class="user-nav">
+        <a href="/admin" id="admin-link" class="btn btn-secondary" style="display: none;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          Quản trị Admin
+        </a>
+        <div class="user-profile" id="user-profile-widget">
+          <!-- Rendered dynamically -->
+        </div>
+        <button id="btn-logout" class="btn btn-secondary btn-danger" style="padding: 8px 14px; font-size: 13px;">
+          Đăng xuất
+        </button>
+      </div>
+    </header>
+
+    <!-- System HUD Status bar -->
+    <div style="display: flex; gap: 24px; margin-bottom: 16px; font-family: monospace; font-size: 11px; color: var(--text-muted); flex-wrap: wrap; background: rgba(255, 255, 255, 0.01); padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border-color); width: fit-content; align-items: center;">
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <span class="pulse-dot" style="background-color: var(--color-success); width: 6px; height: 6px; display: inline-block;"></span>
+        <span>SYSTEM: <span style="color: var(--color-success); font-weight: bold;">ONLINE</span></span>
+      </div>
+      <div>CORE: <span style="color: var(--color-success); font-weight: bold;">SQLITE3 / EXPRESS</span></div>
+      <div>TIME: <span id="system-time" style="color: var(--primary-color);">--:--:--</span></div>
+      <div>VERSION: <span style="color: #a855f7;">v2.5.0-cyber</span></div>
+    </div>
+
+    <!-- Stats summary section -->
+    <div class="stats-container">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Tài khoản</span>
+          <span class="stat-value" id="stat-user-role">Đang tải...</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon success">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Bảo mật giao dịch</span>
+          <span class="stat-value">SSL / AES-256</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="color: var(--color-warning); background: rgba(245, 158, 11, 0.1);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Hệ thống kích hoạt</span>
+          <span class="stat-value" style="color: var(--color-success); font-size: 16px;">Tự động qua Sepay</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Catalog Section -->
+    <div class="section-header" style="margin-top: 8px;">
+      <h2 style="font-size: 18px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 10px; letter-spacing: -0.3px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+        </svg>
+        Cửa hàng Công cụ & Tool Bản Quyền
+      </h2>
+    </div>
+    <div class="products-grid" id="storefront-products-list">
+      <!-- Loaded dynamically from app.js -->
+      <div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 40px;">Đang tải danh sách sản phẩm...</div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="dashboard-grid">
+      
+      <!-- Left Column: Keys & Transactions -->
+      <div class="left-column">
+        <!-- Purchased Keys -->
+        <div class="card">
+          <h3 class="card-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m-2 4a2 2 0 012 2m-2-4a2 2 0 11-4 0m8 8a2 2 0 01-2-2v-3a2 2 0 00-2-2H9a2 2 0 00-2 2v3a2 2 0 01-2 2h14z" />
+            </svg>
+            Mã bản quyền của bạn
+          </h3>
+          <div class="table-wrapper">
+            <table id="keys-table">
+              <thead>
+                <tr>
+                  <th>Sản phẩm / Tool</th>
+                  <th>Mã Key</th>
+                  <th>Gói</th>
+                  <th>Trạng thái</th>
+                  <th>Hạn sử dụng</th>
+                  <th>Ngày tạo</th>
+                </tr>
+              </thead>
+              <tbody id="keys-list">
+                <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Đang tải dữ liệu...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Transactions -->
+        <div class="card">
+          <h3 class="card-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+            </svg>
+            Lịch sử thanh toán
+          </h3>
+          <div class="table-wrapper">
+            <table id="transactions-table">
+              <thead>
+                <tr>
+                  <th>Sản phẩm / Tool</th>
+                  <th>Mã chuyển khoản</th>
+                  <th>Số tiền</th>
+                  <th>Trạng thái</th>
+                  <th>Ngày tạo</th>
+                </tr>
+              </thead>
+              <tbody id="transactions-list">
+                <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Đang tải dữ liệu...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Instructions -->
+      <div class="right-column">
+        <div class="card">
+          <h3 class="card-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Hướng dẫn sử dụng
+          </h3>
+          <div style="font-size: 13.5px; line-height: 1.6; color: var(--text-muted); display: flex; flex-direction: column; gap: 14px;">
+            <p>Sau khi mua Key thành công, bạn thực hiện các bước sau để kích hoạt ứng dụng:</p>
+            <ol style="margin-left: 20px; display: flex; flex-direction: column; gap: 8px;">
+              <li>Tải xuống và cài đặt công cụ (Tool) tương ứng.</li>
+              <li>Mở công cụ lên trên máy tính của bạn.</li>
+              <li>Sao chép <strong>Mã bản quyền (Key)</strong> ở danh sách bên trái.</li>
+              <li>Dán mã vào khung kích hoạt bản quyền trong Tool và bấm <strong>Kích hoạt (Verify)</strong>.</li>
+            </ol>
+            <div style="background: rgba(99, 102, 241, 0.05); border: 1px solid rgba(99, 102, 241, 0.15); border-radius: 12px; padding: 12px; font-size: 12.5px; color: #a5b4fc; font-weight: 500;">
+              💡 <strong>Lưu ý:</strong> Mỗi Key chỉ sử dụng được cho 1 máy tại 1 thời điểm. Hệ thống tự động kích hoạt ngay sau khi bạn hoàn tất chuyển khoản VietQR đúng cú pháp.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <p>© 2026 AIO Key Server - Tích hợp thanh toán tự động qua cổng Sepay</p>
+    </footer>
+  </div>
+
+  <!-- Checkout Modal -->
+  <div class="modal-overlay" id="checkout-modal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title" id="checkout-product-title">Mua mã bản quyền</h3>
+        <button class="modal-close" onclick="closeCheckoutModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      
+      <!-- Checkout Form -->
+      <div id="checkout-form-section">
+        <div class="form-group">
+          <label class="form-label">Chọn gói thời hạn bản quyền:</label>
+          <!-- Dynamic 3-columns package options -->
+          <div id="checkout-packages-container" class="package-options-grid">
+            <!-- Loaded dynamically from app.js -->
+          </div>
+          <!-- Legacy select kept hidden for form compatibility -->
+          <select id="checkout-key-package" class="form-select" style="display: none;">
+            <!-- Loaded dynamically based on selected product prices -->
+          </select>
+        </div>
+        <button id="btn-create-order" class="btn" style="width: 100%; justify-content: center; padding: 12px; font-weight: 700; margin-top: 8px;">
+          Tạo mã thanh toán
+        </button>
+      </div>
+
+      <!-- Payment Area (Hidden by default) -->
+      <div id="payment-section" style="display: none;">
+        <div class="qr-box" style="border: none; padding: 0;">
+          <div class="qr-image-wrapper">
+            <img id="payment-qr" src="" alt="VietQR" class="qr-image">
+          </div>
+          <div class="invoice-details">
+            <div class="invoice-row">
+              <span class="invoice-label">Ngân hàng</span>
+              <span class="invoice-val" id="payment-bank">...</span>
+            </div>
+            <div class="invoice-row">
+              <span class="invoice-label">Số tài khoản</span>
+              <span class="invoice-val" id="payment-account">...</span>
+            </div>
+            <div class="invoice-row">
+              <span class="invoice-label">Chủ tài khoản</span>
+              <span class="invoice-val" id="payment-holder">...</span>
+            </div>
+            <div class="invoice-row">
+              <span class="invoice-label">Số tiền</span>
+              <span class="invoice-val invoice-val-success" id="payment-amount">...</span>
+            </div>
+            <div class="invoice-label" style="margin-top: 8px; font-size: 12px; font-weight: 700;">Nội dung chuyển khoản bắt buộc:</div>
+            <div class="memo-container">
+              <span class="memo-code-text" id="payment-memo">...</span>
+              <button onclick="copyMemo()" class="copy-btn">Sao chép</button>
+            </div>
+          </div>
+          
+          <div style="font-size: 11px; color: var(--color-warning); text-align: center; line-height: 1.5; font-weight: 500;">
+            ⚠️ QUAN TRỌNG: Vui lòng chuyển khoản đúng số tiền và nhập CHÍNH XÁC nội dung chuyển khoản để hệ thống tự động kích hoạt Key sau 1-2 phút!
+          </div>
+          
+          <div class="status-indicator" style="justify-content: center; width: 100%;">
+            <span class="pulse-dot"></span>
+            <span>Đang kiểm tra giao dịch tự động...</span>
+          </div>
+          
+          <button id="btn-cancel-order" class="btn btn-secondary btn-danger" style="width: 100%; justify-content: center;">Hủy yêu cầu</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    function copyMemo() {
+      const memoText = document.getElementById('payment-memo').textContent;
+      navigator.clipboard.writeText(memoText).then(() => {
+        // dynamic visual feedback
+        const btn = document.querySelector('.memo-container .copy-btn');
+        const oldText = btn.textContent;
+        btn.textContent = 'Đã chép!';
+        btn.style.background = 'var(--color-success)';
+        btn.style.color = '#fff';
+        btn.style.borderColor = 'var(--color-success)';
+        setTimeout(() => {
+          btn.textContent = oldText;
+          btn.style.background = '';
+          btn.style.color = '';
+          btn.style.borderColor = '';
+      });
+    }
+    
+    function updateSystemTime() {
+      const el = document.getElementById('system-time');
+      if (el) {
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const dd = String(now.getDate()).padStart(2, '0');
+        const hh = String(now.getHours()).padStart(2, '0');
+        const min = String(now.getMinutes()).padStart(2, '0');
+        const ss = String(now.getSeconds()).padStart(2, '0');
+        el.textContent = `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
+      }
+    }
+    updateSystemTime();
+    setInterval(updateSystemTime, 1000);
+  </script>
+</body>
+</html>

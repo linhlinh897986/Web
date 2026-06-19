@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản trị Admin - AIO Key Store</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="logo-section">
+        <div class="logo-icon" style="background: var(--primary-gradient); box-shadow: 0 4px 15px rgba(249, 115, 22, 0.35);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+          </svg>
+        </div>
+        <span class="logo-text">AIO Admin Control</span>
+      </div>
+      <div class="user-nav">
+        <a href="/" class="btn btn-secondary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+          </svg>
+          Xem Dashboard Thường
+        </a>
+        <div class="user-profile" id="user-profile-widget">
+          <!-- Rendered dynamically -->
+        </div>
+        <button id="btn-logout" class="btn btn-secondary btn-danger" style="padding: 8px 14px; font-size: 13px;">
+          Đăng xuất
+        </button>
+      </div>
+    </header>
+
+    <!-- System HUD Status bar -->
+    <div style="display: flex; gap: 24px; margin-bottom: 16px; font-family: monospace; font-size: 11px; color: var(--text-muted); flex-wrap: wrap; background: rgba(255, 255, 255, 0.01); padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border-color); width: fit-content; align-items: center;">
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <span class="pulse-dot" style="background-color: var(--color-success); width: 6px; height: 6px; display: inline-block;"></span>
+        <span>SYSTEM: <span style="color: var(--color-success); font-weight: bold;">ONLINE</span></span>
+      </div>
+      <div>CORE: <span style="color: var(--color-success); font-weight: bold;">SQLITE3 / EXPRESS</span></div>
+      <div>TIME: <span id="system-time" style="color: var(--primary-color);">--:--:--</span></div>
+      <div>VERSION: <span style="color: #a855f7;">v2.5.0-cyber</span></div>
+    </div>
+
+    <!-- Admin Panel Tabs -->
+    <div style="display: flex; gap: 12px; margin-bottom: 28px; background: rgba(255, 255, 255, 0.02); padding: 6px; border-radius: 14px; border: 1px solid var(--border-color); width: fit-content;">
+      <button class="btn admin-tab-btn active" data-tab="tab-keys">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m-2 4a2 2 0 012 2m-2-4a2 2 0 11-4 0m8 8a2 2 0 01-2-2v-3a2 2 0 00-2-2H9a2 2 0 00-2 2v3a2 2 0 01-2 2h14z" />
+        </svg>
+        Quản lý Keys
+      </button>
+      <button class="btn btn-secondary admin-tab-btn" data-tab="tab-products">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        </svg>
+        Quản lý Sản phẩm
+      </button>
+      <button class="btn btn-secondary admin-tab-btn" data-tab="tab-transactions">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+        </svg>
+        Lịch sử Giao dịch
+      </button>
+      <button class="btn btn-secondary admin-tab-btn" data-tab="tab-users">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+        Danh sách Thành viên
+      </button>
+    </div>
+
+    <!-- TAB 1: MANAGE KEYS -->
+    <div id="tab-keys" class="admin-tab-content card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+        <h3 class="card-title" style="margin-bottom: 0;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m-2 4a2 2 0 012 2m-2-4a2 2 0 11-4 0m8 8a2 2 0 01-2-2v-3a2 2 0 00-2-2H9a2 2 0 00-2 2v3a2 2 0 01-2 2h14z" />
+          </svg>
+          Quản lý mã Key đã cấp
+        </h3>
+        <button id="btn-show-key-gen" class="btn" style="font-size: 13.5px; padding: 8px 18px;">
+          + Cấp Key Thủ Công
+        </button>
+      </div>
+
+      <!-- Key Generator Box (Hidden by default) -->
+      <div id="manual-key-gen-box" style="display: none; background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); border-radius: 16px; padding: 24px; margin-bottom: 24px;">
+        <h4 style="font-size: 14.5px; font-weight: 700; color: #fff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Cấp Key thủ công cho thành viên
+        </h4>
+        <div style="display: grid; grid-template-columns: 1.2fr 1.2fr 1fr 1fr 110px; gap: 12px; align-items: end;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="gen-key-product-id">Chọn sản phẩm:</label>
+            <select id="gen-key-product-id" class="form-select">
+              <!-- Loaded dynamically -->
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="gen-user-id">Chọn người nhận (User):</label>
+            <select id="gen-user-id" class="form-select">
+              <option value="">-- Cấp offline --</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="gen-key-type">Gói Key:</label>
+            <select id="gen-key-type" class="form-select">
+              <option value="30_days">30 ngày (1 Tháng)</option>
+              <option value="180_days">180 ngày (6 Tháng)</option>
+              <option value="365_days">365 ngày (1 Năm)</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="gen-key-duration">Hạn dùng (ngày):</label>
+            <input type="number" id="gen-key-duration" value="30" class="form-input">
+          </div>
+          <button id="btn-submit-generate" class="btn" style="justify-content: center; height: 45px; width: 100%; padding: 0 10px;">
+            Tạo Key
+          </button>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Sản phẩm / Tool</th>
+              <th>Mã Key</th>
+              <th>Chủ sở hữu</th>
+              <th>Gói</th>
+              <th>Trạng thái</th>
+              <th>Hạn dùng</th>
+              <th>Ngày cấp</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="admin-keys-list">
+            <tr><td colspan="9" style="text-align: center; color: var(--text-muted);">Đang tải dữ liệu...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 4: PRODUCTS (Manage Products Catalog) -->
+    <div id="tab-products" class="admin-tab-content card" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+        <h3 class="card-title" style="margin-bottom: 0;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
+          Quản lý sản phẩm & Tool đang bán
+        </h3>
+        <button id="btn-show-add-product" class="btn" style="font-size: 13.5px; padding: 8px 18px;">
+          + Đăng sản phẩm mới
+        </button>
+      </div>
+
+      <!-- Product Form Area (Hidden by default, used for Add and Edit) -->
+      <div id="product-form-box" style="display: none; background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); border-radius: 16px; padding: 24px; margin-bottom: 24px;">
+        <h4 id="product-form-title" style="font-size: 14.5px; font-weight: 700; color: #fff; margin-bottom: 16px;">Đăng sản phẩm mới</h4>
+        
+        <input type="hidden" id="prod-id">
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="prod-name">Tên sản phẩm/Tool:</label>
+            <input type="text" id="prod-name" placeholder="Ví dụ: AIO Facebook Auto Post" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="prod-image-file">Chọn ảnh sản phẩm (Tải lên):</label>
+            <input type="file" id="prod-image-file" accept="image/*" class="form-input" style="padding: 8px 16px; height: auto;">
+            <div id="image-preview-container" style="margin-top: 10px; display: none;">
+              <img id="prod-image-preview" src="" style="max-width: 120px; max-height: 90px; border-radius: 6px; border: 1px solid var(--border-color); object-fit: cover; display: block;">
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group-textarea form-group">
+          <label class="form-label" for="prod-description">Mô tả chi tiết sản phẩm:</label>
+          <textarea id="prod-description" placeholder="Nhập mô tả các chức năng của Tool..." class="form-textarea"></textarea>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label class="form-label" for="prod-download-url">Link tải Tool (Google Drive / Dropbox / Mega...):</label>
+          <input type="text" id="prod-download-url" placeholder="Nhập liên kết tải tool (ví dụ: https://drive.google.com/...)" class="form-input">
+        </div>
+
+        <div class="form-row" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="form-group">
+            <label class="form-label" for="prod-price-30">Giá gói 30 ngày (đ):</label>
+            <input type="number" id="prod-price-30" value="50000" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="prod-price-180">Giá gói 180 ngày (đ):</label>
+            <input type="number" id="prod-price-180" value="250000" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="prod-price-365">Giá gói 365 ngày (đ):</label>
+            <input type="number" id="prod-price-365" value="450000" class="form-input">
+          </div>
+        </div>
+        
+        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 8px;">
+          <button id="btn-cancel-product" class="btn btn-secondary">Hủy bỏ</button>
+          <button id="btn-submit-product" class="btn">Lưu sản phẩm</button>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Ảnh</th>
+              <th>Tên sản phẩm</th>
+              <th>Mô tả</th>
+              <th>Gói 30 ngày</th>
+              <th>Gói 180 ngày</th>
+              <th>Gói 365 ngày</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="admin-products-list">
+            <tr><td colspan="8" style="text-align: center; color: var(--text-muted);">Đang tải dữ liệu...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 2: TRANSACTIONS -->
+    <div id="tab-transactions" class="admin-tab-content card" style="display: none;">
+      <h3 class="card-title" style="margin-bottom: 24px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+        </svg>
+        Lịch sử Giao dịch Ngân hàng
+      </h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Sản phẩm / Tool</th>
+              <th>Khách hàng</th>
+              <th>Số tiền</th>
+              <th>Mã chuyển khoản</th>
+              <th>Trạng thái</th>
+              <th>Ngày tạo</th>
+              <th>Ngày cập nhật</th>
+            </tr>
+          </thead>
+          <tbody id="admin-transactions-list">
+            <tr><td colspan="8" style="text-align: center; color: var(--text-muted);">Đang tải dữ liệu...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 3: USERS -->
+    <div id="tab-users" class="admin-tab-content card" style="display: none;">
+      <h3 class="card-title" style="margin-bottom: 24px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+        Danh sách Thành viên đã đăng ký
+      </h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Google ID</th>
+              <th>Ảnh</th>
+              <th>Họ tên</th>
+              <th>Email</th>
+              <th>Vai trò</th>
+              <th>Ngày gia nhập</th>
+            </tr>
+          </thead>
+          <tbody id="admin-users-list">
+            <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Đang tải dữ liệu...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <p>© 2026 AIO Admin Control Panel - Quản trị và kiểm soát hệ thống bán Key</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    function updateSystemTime() {
+      const el = document.getElementById('system-time');
+      if (el) {
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const dd = String(now.getDate()).padStart(2, '0');
+        const hh = String(now.getHours()).padStart(2, '0');
+        const min = String(now.getMinutes()).padStart(2, '0');
+        const ss = String(now.getSeconds()).padStart(2, '0');
+        el.textContent = `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
+      }
+    }
+    updateSystemTime();
+    setInterval(updateSystemTime, 1000);
+  </script>
+</body>
+</html>

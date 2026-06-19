@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng nhập - Hệ thống bán Key AIO</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body class="login-bg">
+  <div class="container" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 16px;">
+    <div class="card login-container">
+      <div style="text-align: center; margin-bottom: 32px;">
+        <div class="login-logo" style="animation: logo-glow 3s ease-in-out infinite;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m-2 4a2 2 0 012 2m-2-4a2 2 0 11-4 0m8 8a2 2 0 01-2-2v-3a2 2 0 00-2-2H9a2 2 0 00-2 2v3a2 2 0 01-2 2h14z" />
+          </svg>
+        </div>
+        <div style="margin-bottom: 16px;">
+          <div style="font-family: monospace; font-size: 11px; color: var(--color-success); background: rgba(16, 185, 129, 0.05); padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.25); display: inline-flex; align-items: center; gap: 6px;">
+            <span class="pulse-dot" style="background-color: var(--color-success); width: 6px; height: 6px; display: inline-block;"></span>
+            <span>SECURE SERVER CONNECTED</span>
+          </div>
+        </div>
+        <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 10px; color: #fff; letter-spacing: -0.5px;">AIO Key Store</h2>
+        <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6; padding: 0 10px;">
+          Đăng nhập bằng tài khoản Google để mua, quản lý và gia hạn mã bản quyền công cụ của bạn.
+        </p>
+      </div>
+      
+      <!-- Google Login Button Container -->
+      <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 8px;">
+        <div id="google-login-btn">Đang tải cấu hình đăng nhập...</div>
+      </div>
+      
+      <div id="error-msg" style="color: var(--color-danger); background: var(--color-danger-bg); border: 1px solid rgba(244, 63, 94, 0.2); border-radius: 10px; padding: 12px; font-size: 13.5px; font-weight: 500; text-align: center; margin-top: 20px; display: none;"></div>
+    </div>
+  </div>
+
+  <script>
+    // Kiểm tra xem đã đăng nhập chưa
+    if (localStorage.getItem('aio_web_token')) {
+      window.location.href = '/';
+    }
+
+    // Callback xử lý thông tin đăng nhập Google gửi về
+    async function handleCredentialResponse(response) {
+      const errorMsgEl = document.getElementById('error-msg');
+      errorMsgEl.style.display = 'none';
+      
+      try {
+        const res = await fetch('/api/auth/google', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idToken: response.credential })
+        });
+        const data = await res.json();
+        
+        if (!res.ok) throw new Error(data.error || 'Đăng nhập thất bại.');
+
+        // Lưu JWT và thông tin user vào localStorage
+        localStorage.setItem('aio_web_token', data.token);
+        localStorage.setItem('aio_web_user', JSON.stringify(data.user));
+        
+        // Điều hướng dựa trên vai trò
+        if (data.user.role === 'admin') {
+          window.location.href = '/admin';
+        } else {
+          window.location.href = '/';
+        }
+      } catch (err) {
+        errorMsgEl.textContent = err.message;
+        errorMsgEl.style.display = 'block';
+      }
+    }
+
+    // Khởi tạo nút đăng nhập Google động bằng Client ID lấy từ Server
+    window.onload = async function () {
+      try {
+        const res = await fetch('/api/auth/google/client-id');
+        const data = await res.json();
+        const clientId = data.clientId;
+
+        if (!clientId || clientId.includes('YOUR_GOOGLE_CLIENT_ID')) {
+          document.getElementById('google-login-btn').innerHTML = '<span style="color:var(--color-warning); font-size: 13px; font-weight:600;">⚠️ Chưa cấu hình GOOGLE_CLIENT_ID trong file .env!</span>';
+          return;
+        }
+
+        google.accounts.id.initialize({
+          client_id: clientId,
+          callback: handleCredentialResponse
+        });
+        
+        google.accounts.id.renderButton(
+          document.getElementById("google-login-btn"),
+          { theme: "filled_dark", size: "large", width: 300, text: "signin_with", shape: "pill" }
+        );
+      } catch (err) {
+        document.getElementById('google-login-btn').textContent = 'Lỗi tải nút đăng nhập: ' + err.message;
+      }
+    };
+  </script>
+</body>
+</html>
