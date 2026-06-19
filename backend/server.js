@@ -134,8 +134,8 @@ app.post('/api/buy-key', auth.verifyToken, async (req, res) => {
     const bankAccount = process.env.BANK_ACCOUNT || '1234567890';
     const bankAccountName = process.env.BANK_ACCOUNT_NAME || 'AIO Scraper Owner';
     
-    // Tạo link QR VietQR tự động
-    const qrUrl = `https://img.vietqr.io/image/${bankId}-${bankAccount}-compact2.png?amount=${amount}&addInfo=${memoCode}&accountName=${encodeURIComponent(bankAccountName)}`;
+    // Tạo link QR thanh toán tự động qua SePay (chuẩn VietQR)
+    const qrUrl = `https://qr.sepay.vn/img?bank=${bankId}&acc=${bankAccount}&template=compact&amount=${amount}&des=${memoCode}&showinfo=true&holder=${encodeURIComponent(bankAccountName)}`;
 
     res.json({
       success: true,
