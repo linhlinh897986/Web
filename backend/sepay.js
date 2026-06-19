@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const db = require('./db');
 
 function generateKeyString() {
@@ -9,11 +10,17 @@ function generateKeyString() {
 async function handleSepayWebhook(req, res) {
   const webhookKey = process.env.SEPAY_WEBHOOK_KEY;
   if (webhookKey) {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.replace('Apikey ', '').trim();
-    if (token !== webhookKey) {
-      console.warn('[Sepay Webhook]: Xác thực Authorization token thất bại!');
-      return res.status(401).json({ error: 'Unauthorized' });
+    const signature = req.headers['x-sepay-signature'] || '';
+    const timestamp = req.headers['x-sepay-timestamp'] || '';
+    const payload = JSON.stringify(req.body);
+
+    const expected = 'sha256=' + crypto.createHmac('sha256', webhookKey)
+      .update(timestamp + '.' + payload)
+      .digest('hex');
+
+    if (signature !== expected) {
+      console.warn('[Sepay Webhook]: Xác thực chữ ký HMAC-SHA256 thất bại!');
+      return res.status(401).json({ error: 'Invalid signature' });
     }
   }
 
