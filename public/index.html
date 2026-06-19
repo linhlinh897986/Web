@@ -97,86 +97,59 @@
       <div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 40px;">Đang tải danh sách sản phẩm...</div>
     </div>
 
-    <!-- Main Content Grid -->
-    <div class="dashboard-grid">
+    <!-- Main Content Layout (Full Width) -->
+    <div class="left-column" style="width: 100%; max-width: 100%;">
       
-      <!-- Left Column: Keys & Transactions -->
-      <div class="left-column">
-        <!-- Purchased Keys -->
-        <div class="card">
-          <h3 class="card-title">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m-2 4a2 2 0 012 2m-2-4a2 2 0 11-4 0m8 8a2 2 0 01-2-2v-3a2 2 0 00-2-2H9a2 2 0 00-2 2v3a2 2 0 01-2 2h14z" />
-            </svg>
-            Mã bản quyền của bạn
-          </h3>
-          <div class="table-wrapper">
-            <table id="keys-table">
-              <thead>
-                <tr>
-                  <th>Sản phẩm / Tool</th>
-                  <th>Mã Key</th>
-                  <th>Gói</th>
-                  <th>Trạng thái</th>
-                  <th>Hạn sử dụng</th>
-                  <th>Ngày tạo</th>
-                </tr>
-              </thead>
-              <tbody id="keys-list">
-                <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Đang tải dữ liệu...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Transactions -->
-        <div class="card">
-          <h3 class="card-title">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-            </svg>
-            Lịch sử thanh toán
-          </h3>
-          <div class="table-wrapper">
-            <table id="transactions-table">
-              <thead>
-                <tr>
-                  <th>Sản phẩm / Tool</th>
-                  <th>Mã chuyển khoản</th>
-                  <th>Số tiền</th>
-                  <th>Trạng thái</th>
-                  <th>Ngày tạo</th>
-                </tr>
-              </thead>
-              <tbody id="transactions-list">
-                <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Đang tải dữ liệu...</td></tr>
-              </tbody>
-            </table>
-          </div>
+      <!-- Purchased Keys -->
+      <div class="card">
+        <h3 class="card-title">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m-2 4a2 2 0 012 2m-2-4a2 2 0 11-4 0m8 8a2 2 0 01-2-2v-3a2 2 0 00-2-2H9a2 2 0 00-2 2v3a2 2 0 01-2 2h14z" />
+          </svg>
+          Mã bản quyền của bạn
+        </h3>
+        <div class="table-wrapper">
+          <table id="keys-table">
+            <thead>
+              <tr>
+                <th>Sản phẩm / Tool</th>
+                <th>Mã Key</th>
+                <th>Gói</th>
+                <th>Trạng thái</th>
+                <th>Hạn sử dụng</th>
+                <th>Ngày tạo</th>
+              </tr>
+            </thead>
+            <tbody id="keys-list">
+              <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Đang tải dữ liệu...</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
-      <!-- Right Column: Instructions -->
-      <div class="right-column">
-        <div class="card">
-          <h3 class="card-title">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            Hướng dẫn sử dụng
-          </h3>
-          <div style="font-size: 13.5px; line-height: 1.6; color: var(--text-muted); display: flex; flex-direction: column; gap: 14px;">
-            <p>Sau khi mua Key thành công, bạn thực hiện các bước sau để kích hoạt ứng dụng:</p>
-            <ol style="margin-left: 20px; display: flex; flex-direction: column; gap: 8px;">
-              <li>Tải xuống và cài đặt công cụ (Tool) tương ứng.</li>
-              <li>Mở công cụ lên trên máy tính của bạn.</li>
-              <li>Sao chép <strong>Mã bản quyền (Key)</strong> ở danh sách bên trái.</li>
-              <li>Dán mã vào khung kích hoạt bản quyền trong Tool và bấm <strong>Kích hoạt (Verify)</strong>.</li>
-            </ol>
-            <div style="background: rgba(99, 102, 241, 0.05); border: 1px solid rgba(99, 102, 241, 0.15); border-radius: 12px; padding: 12px; font-size: 12.5px; color: #a5b4fc; font-weight: 500;">
-              💡 <strong>Lưu ý:</strong> Mỗi Key chỉ sử dụng được cho 1 máy tại 1 thời điểm. Hệ thống tự động kích hoạt ngay sau khi bạn hoàn tất chuyển khoản VietQR đúng cú pháp.
-            </div>
-          </div>
+      <!-- Transactions -->
+      <div class="card">
+        <h3 class="card-title">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+          </svg>
+          Lịch sử thanh toán
+        </h3>
+        <div class="table-wrapper">
+          <table id="transactions-table">
+            <thead>
+              <tr>
+                <th>Sản phẩm / Tool</th>
+                <th>Mã chuyển khoản</th>
+                <th>Số tiền</th>
+                <th>Trạng thái</th>
+                <th>Ngày tạo</th>
+              </tr>
+            </thead>
+            <tbody id="transactions-list">
+              <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Đang tải dữ liệu...</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
