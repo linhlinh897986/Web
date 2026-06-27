@@ -140,7 +140,7 @@ app.post('/api/buy-key', auth.verifyToken, async (req, res) => {
     const bankAccountName = process.env.BANK_ACCOUNT_NAME || 'AIO Scraper Owner';
     
     // Tạo link QR thanh toán tự động qua SePay (chuẩn VietQR)
-    const qrUrl = `https://qr.sepay.vn/img?bank=${bankId}&acc=${bankAccount}&template=compact&amount=${amount}&des=${memoCode}&showinfo=true&holder=${encodeURIComponent(bankAccountName)}`;
+    const qrUrl = `https://qr.sepay.vn/img?bank=${bankId}&acc=${bankAccount}&template=compact&amount=${amount}&des=${memoCode}&showinfo=false&holder=${encodeURIComponent(bankAccountName)}`;
 
     res.json({
       success: true,
