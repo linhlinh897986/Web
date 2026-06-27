@@ -153,6 +153,14 @@ async function initDatabase() {
           package_type VARCHAR(50)
         )
       `);
+
+      // 5. Settings table
+      await dbRun(`
+        CREATE TABLE IF NOT EXISTS settings (
+          key_name VARCHAR(255) PRIMARY KEY,
+          key_value TEXT
+        )
+      `);
     } else {
       // SQLite
       await dbRun(`
@@ -219,6 +227,12 @@ async function initDatabase() {
       try {
         await dbRun("ALTER TABLE products ADD COLUMN download_url TEXT");
       } catch (e) {}
+      await dbRun(`
+        CREATE TABLE IF NOT EXISTS settings (
+          key_name TEXT PRIMARY KEY,
+          key_value TEXT
+        )
+      `);
     }
 
     // Seed default product if empty
@@ -243,6 +257,15 @@ async function initDatabase() {
       await dbRun("UPDATE transactions SET package_type = '30_days' WHERE package_type IS NULL AND amount <= 50000");
       await dbRun("UPDATE transactions SET package_type = '180_days' WHERE package_type IS NULL AND amount > 50000 AND amount <= 250000");
       await dbRun("UPDATE transactions SET package_type = '365_days' WHERE package_type IS NULL AND amount > 250000");
+    }
+
+    // Seed default settings if empty
+    const settingsCount = await dbGet("SELECT COUNT(*) as count FROM settings");
+    if (parseInt(settingsCount.count || settingsCount.COUNT || 0) === 0) {
+      await dbRun("INSERT INTO settings (key_name, key_value) VALUES ('contact_zalo', 'https://zalo.me/g/ojeo64iqpwqnba1tvz9k')");
+      await dbRun("INSERT INTO settings (key_name, key_value) VALUES ('contact_facebook', 'https://www.facebook.com/hoathinhdieukhaccat/')");
+      await dbRun("INSERT INTO settings (key_name, key_value) VALUES ('contact_email', 'animationhongcat@gmail.com')");
+      console.log('[Website Database Seed]: Seeded default settings.');
     }
 
     console.log('[Website Database]: Schema initialized and migrated successfully.');

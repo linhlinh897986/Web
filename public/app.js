@@ -106,6 +106,7 @@ let currentCheckoutProductId = null;
 
 function initUserDashboard() {
   loadProductsCatalog();
+  loadContactSettings();
 
   if (token && currentUser) {
     const dashboardSec = document.getElementById('personal-dashboard-section');
@@ -467,6 +468,40 @@ function initAdminDashboard() {
   loadAdminTransactions();
   loadAdminUsers();
   loadAdminProductsDropdown();
+  loadAdminStats();
+
+  const monthFilter = document.getElementById('admin-revenue-month-filter');
+  if (monthFilter) {
+    monthFilter.addEventListener('change', (e) => {
+      loadAdminStats(e.target.value);
+    });
+  }
+
+  const settingsForm = document.getElementById('admin-settings-form');
+  if (settingsForm) {
+    settingsForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const zalo = document.getElementById('setting-zalo').value;
+      const facebook = document.getElementById('setting-facebook').value;
+      const email = document.getElementById('setting-email').value;
+
+      try {
+        const res = await fetch('/api/admin/settings', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ zalo, facebook, email })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        alert(data.message || 'Lưu cấu hình liên hệ thành công!');
+      } catch (err) {
+        alert('Không thể lưu cấu hình: ' + err.message);
+      }
+    });
+  }
 
   // Nút hiển thị hộp cấp key thủ công
   const toggleGenBtn = document.getElementById('btn-show-key-gen');
@@ -575,6 +610,8 @@ function setupAdminTabs() {
       // Load products if products tab is opened
       if (tabId === 'tab-products') {
         loadAdminProducts();
+      } else if (tabId === 'tab-settings') {
+        loadAdminSettings();
       }
     });
   });
@@ -963,3 +1000,62 @@ window.copyKeyValue = function(btn, val) {
     }, 1500);
   });
 };
+
+// Tải cấu hình liên hệ và hiển thị lên Landing Page
+async function loadContactSettings() {
+  try {
+    const res = await fetch('/api/settings');
+    const data = await res.json();
+    if (res.ok && data.settings) {
+      const { contact_zalo, contact_facebook, contact_email } = data.settings;
+      const zaloBtn = document.getElementById('contact-zalo-btn');
+      if (zaloBtn && contact_zalo) zaloBtn.href = contact_zalo;
+
+      const fbBtn = document.getElementById('contact-facebook-btn');
+      if (fbBtn && contact_facebook) fbBtn.href = contact_facebook;
+
+      const emailBtn = document.getElementById('contact-email-btn');
+      if (emailBtn && contact_email) emailBtn.href = `mailto:${contact_email}`;
+    }
+  } catch (err) {
+    console.error('Lỗi tải cấu hình liên hệ:', err);
+  }
+}
+
+// Tải cấu hình liên hệ cho form Admin
+async function loadAdminSettings() {
+  try {
+    const res = await fetch('/api/settings');
+    const data = await res.json();
+    if (res.ok && data.settings) {
+      document.getElementById('setting-zalo').value = data.settings.contact_zalo || '';
+      document.getElementById('setting-facebook').value = data.settings.contact_facebook || '';
+      document.getElementById('setting-email').value = data.settings.contact_email || '';
+    }
+  } catch (err) {
+    console.error('Lỗi tải cấu hình Zalo/FB/Email:', err);
+  }
+}
+
+// Tải thống kê doanh thu và số key còn hạn cho Admin
+async function loadAdminStats(monthVal = '') {
+  try {
+    const url = monthVal ? `/api/admin/stats?month=${monthVal}` : '/api/admin/stats';
+    const res = await fetch(url, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+
+    document.getElementById('admin-stat-total-revenue').textContent = `${parseInt(data.totalRevenue).toLocaleString('vi-VN')} đ`;
+    document.getElementById('admin-stat-active-keys').textContent = data.activeKeysCount;
+    document.getElementById('admin-stat-monthly-revenue').textContent = `${parseInt(data.monthlyRevenue).toLocaleString('vi-VN')} đ`;
+    
+    const monthFilter = document.getElementById('admin-revenue-month-filter');
+    if (monthFilter && !monthFilter.value) {
+      monthFilter.value = data.month;
+    }
+  } catch (err) {
+    console.error('Lỗi tải dữ liệu thống kê:', err);
+  }
+}

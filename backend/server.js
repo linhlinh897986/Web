@@ -201,6 +201,66 @@ app.get('/api/admin/transactions', auth.verifyAdmin, async (req, res) => {
   }
 });
 
+// ── CẤU HÌNH LIÊN HỆ & THỐNG KÊ (Mới) ─────────────────────────────────────────
+app.get('/api/settings', async (req, res) => {
+  try {
+    const settingsRows = await db.dbAll('SELECT * FROM settings');
+    const settings = {};
+    settingsRows.forEach(row => {
+      settings[row.key_name] = row.key_value;
+    });
+    res.json({ success: true, settings });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/admin/settings', auth.verifyAdmin, async (req, res) => {
+  const { zalo, facebook, email } = req.body;
+  try {
+    await db.dbRun("DELETE FROM settings WHERE key_name IN ('contact_zalo', 'contact_facebook', 'contact_email')");
+    await db.dbRun("INSERT INTO settings (key_name, key_value) VALUES ('contact_zalo', ?)", [zalo || '']);
+    await db.dbRun("INSERT INTO settings (key_name, key_value) VALUES ('contact_facebook', ?)", [facebook || '']);
+    await db.dbRun("INSERT INTO settings (key_name, key_value) VALUES ('contact_email', ?)", [email || '']);
+    res.json({ success: true, message: 'Đã lưu cấu hình liên hệ thành công!' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/admin/stats', auth.verifyAdmin, async (req, res) => {
+  try {
+    // 1. Tổng doanh thu
+    const revenueRow = await db.dbGet("SELECT SUM(amount) as total FROM transactions WHERE status = 'completed'");
+    const totalRevenue = parseInt(revenueRow.total || 0);
+
+    // 2. Số key còn hạn dùng
+    const activeKeysQuery = db.isPostgres
+      ? `SELECT COUNT(*) as count FROM keys WHERE status = 'active' AND (expires_at IS NULL OR expires_at > CURRENT_TIMESTAMP)`
+      : `SELECT COUNT(*) as count FROM keys WHERE status = 'active' AND (expires_at IS NULL OR datetime(expires_at) > datetime('now'))`;
+    const keysRow = await db.dbGet(activeKeysQuery);
+    const activeKeysCount = parseInt(keysRow.count || 0);
+
+    // 3. Doanh thu theo tháng
+    const month = req.query.month || new Date().toISOString().substring(0, 7); // Định dạng YYYY-MM
+    const monthlyRevenueQuery = db.isPostgres
+      ? `SELECT SUM(amount) as total FROM transactions WHERE status = 'completed' AND to_char(created_at, 'YYYY-MM') = ?`
+      : `SELECT SUM(amount) as total FROM transactions WHERE status = 'completed' AND strftime('%Y-%m', created_at) = ?`;
+    const monthlyRevenueRow = await db.dbGet(monthlyRevenueQuery, [month]);
+    const monthlyRevenue = parseInt(monthlyRevenueRow.total || 0);
+
+    res.json({
+      success: true,
+      totalRevenue,
+      activeKeysCount,
+      monthlyRevenue,
+      month
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.post('/api/admin/generate-key', auth.verifyAdmin, async (req, res) => {
   const { userId, type, durationDays, productId } = req.body;
   
