@@ -358,7 +358,9 @@ async function loadUserTransactions() {
     tbody.innerHTML = data.transactions.map(t => {
       const statusBadge = t.status === 'completed' 
         ? '<span class="badge badge-active">Thành công</span>' 
-        : '<span class="badge badge-pending">Chờ thanh toán</span>';
+        : (t.status === 'failed' 
+          ? '<span class="badge badge-expired">Đã hủy</span>' 
+          : '<span class="badge badge-pending">Chờ thanh toán</span>');
       
       const amountFormatted = parseInt(t.amount).toLocaleString('vi-VN') + ' đ';
       const createdDate = new Date(t.created_at).toLocaleString('vi-VN');
@@ -876,7 +878,9 @@ async function loadAdminTransactions() {
       const amountFormatted = parseInt(t.amount).toLocaleString('vi-VN') + ' đ';
       const statusBadge = t.status === 'completed' 
         ? '<span class="badge badge-active">Thành công</span>' 
-        : '<span class="badge badge-pending">Chờ chuyển khoản</span>';
+        : (t.status === 'failed' 
+          ? '<span class="badge badge-expired">Đã hủy</span>' 
+          : '<span class="badge badge-pending">Chờ chuyển khoản</span>');
       
       const createdDate = new Date(t.created_at).toLocaleString('vi-VN');
       const updatedDate = t.updated_at ? new Date(t.updated_at).toLocaleString('vi-VN') : '-';
