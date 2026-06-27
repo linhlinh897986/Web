@@ -1,31 +1,30 @@
 // ── HỖ TRỢ XÁC THỰC PHIÊN ĐĂNG NHẬP ──────────────────────────────────────────
 const token = localStorage.getItem('aio_web_token');
 const userStr = localStorage.getItem('aio_web_user');
-
-if (!token || !userStr) {
-  if (window.location.pathname !== '/login') {
-    window.location.href = '/login';
-  }
-}
-
 const currentUser = userStr ? JSON.parse(userStr) : null;
 
 // Khởi tạo giao diện khi trang tải xong
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname === '/login') return;
 
-  renderUserProfileWidget();
-  setupLogoutButton();
   startHUDClock();
 
   // Xác định vai trò để xử lý trang tương ứng
   if (window.location.pathname.startsWith('/admin')) {
-    if (currentUser.role !== 'admin') {
+    if (!currentUser || currentUser.role !== 'admin') {
       window.location.href = '/';
       return;
     }
+    renderUserProfileWidget();
+    setupLogoutButton();
     initAdminDashboard();
   } else {
+    if (token && currentUser) {
+      renderUserProfileWidget();
+      setupLogoutButton();
+    } else {
+      renderGuestHeader();
+    }
     initUserDashboard();
   }
 });
@@ -45,6 +44,22 @@ function startHUDClock() {
   
   updateClock();
   setInterval(updateClock, 1000);
+}
+
+// Hiển thị nút đăng nhập cho khách chưa có tài khoản
+function renderGuestHeader() {
+  const widget = document.getElementById('user-profile-widget');
+  if (widget) {
+    widget.innerHTML = `
+      <a href="/login" class="btn btn-secondary" style="padding: 8px 16px; font-size: 13px; border-radius: 20px; border-color: rgba(249, 115, 22, 0.3); color: var(--primary-color);">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h3a3 3 0 013 3v1" />
+        </svg> Đăng nhập
+      </a>
+    `;
+  }
+  const logoutBtn = document.getElementById('btn-logout');
+  if (logoutBtn) logoutBtn.style.display = 'none';
 }
 
 // Hiển thị thông tin người dùng ở góc trên bên phải và stats cards
@@ -75,6 +90,7 @@ function setupLogoutButton() {
   const logoutBtn = document.getElementById('btn-logout');
   if (!logoutBtn) return;
 
+  logoutBtn.style.display = 'inline-flex';
   logoutBtn.addEventListener('click', () => {
     localStorage.removeItem('aio_web_token');
     localStorage.removeItem('aio_web_user');
@@ -90,8 +106,16 @@ let currentCheckoutProductId = null;
 
 function initUserDashboard() {
   loadProductsCatalog();
-  loadUserKeys();
-  loadUserTransactions();
+
+  if (token && currentUser) {
+    const dashboardSec = document.getElementById('personal-dashboard-section');
+    if (dashboardSec) dashboardSec.style.display = 'block';
+    loadUserKeys();
+    loadUserTransactions();
+  } else {
+    const dashboardSec = document.getElementById('personal-dashboard-section');
+    if (dashboardSec) dashboardSec.style.display = 'none';
+  }
 
   const createOrderBtn = document.getElementById('btn-create-order');
   const cancelOrderBtn = document.getElementById('btn-cancel-order');
@@ -178,6 +202,11 @@ async function loadProductsCatalog() {
 
 // Quản lý Modal Checkout
 window.openCheckoutModal = function(productId) {
+  if (!token || !currentUser) {
+    alert('Vui lòng đăng nhập tài khoản Google để thực hiện mua bản quyền!');
+    window.location.href = '/login';
+    return;
+  }
   const modal = document.getElementById('checkout-modal');
   if (!modal) return;
 
